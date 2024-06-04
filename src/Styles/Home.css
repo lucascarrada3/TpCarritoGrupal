@@ -1,0 +1,21 @@
+/* home.css */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .carousel-container {
+    margin-top: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-top: 20px;
+    color: #ffffff;
+  }
+  p {
+    text-align: center;
+    color: #ffffff;
+  }

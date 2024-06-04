@@ -1,0 +1,5 @@
+.carousel-image {
+    max-width: 300px; /* Ajusta el ancho máximo según sea necesario */
+    height: auto; /* Mantenemos la proporción */
+  }
+  
