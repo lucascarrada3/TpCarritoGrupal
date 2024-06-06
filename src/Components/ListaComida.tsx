@@ -2,21 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FoodCard from './CardComida';
 import '../Styles/ListaComida.css';
-import carritoImg from '../img/carrito.png'; // Importa la imagen
-
-const foods = [
-  { id: 1, name: 'Hamburguesa', price: 5 },
-  { id: 2, name: 'Papas Fritas', price: 3 },
-  { id: 3, name: 'Refresco', price: 2 },
-];
+import carritoImg from '../img/carrito.png';
+import { fetchArticulosManufacturados } from '../Backend/FuncionesApi';
+import { ArticuloManufacturado } from '../Elements/Elements';
 
 const FoodList: React.FC = () => {
-  const [cart, setCart] = useState<{ food: any, quantity: number }[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false); // Estado para controlar la apertura y el cierre del carrito
+  const [cart, setCart] = useState<{ food: ArticuloManufacturado, quantity: number }[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [foods, setFoods] = useState<ArticuloManufacturado[]>([]);
   const navigate = useNavigate();
   const cartRef = useRef(null);
 
   useEffect(() => {
+    async function fetchData() {
+      const data = await fetchArticulosManufacturados();
+      setFoods(data);
+    }
+
+    fetchData();
+
     function handleClickOutside(event: MouseEvent) {
       if (cartRef.current && !cartRef.current.contains(event.target)) {
         setIsCartOpen(false);
@@ -30,16 +34,16 @@ const FoodList: React.FC = () => {
   }, []);
 
   const toggleCart = () => {
-    setIsCartOpen(!isCartOpen); // Cambiar el estado de 'isCartOpen'
+    setIsCartOpen(!isCartOpen);
   };
 
-  // Función para agregar un producto al carrito y al globo de texto
-  const addToCart = (food: any) => {
-    const existingItem = cart.find(item => item.food.id === food.id);
+  const addToCart = (foodId: number) => {
+    const existingItem = cart.find(item => item.food.id === foodId);
+    const foodToAdd = foods.find(food => food.id === foodId);
     if (existingItem) {
       setCart(prevCart => {
         const updatedCart = prevCart.map(item => {
-          if (item.food.id === food.id) {
+          if (item.food.id === foodId) {
             return { ...item, quantity: item.quantity + 1 };
           }
           return item;
@@ -47,31 +51,29 @@ const FoodList: React.FC = () => {
         return updatedCart;
       });
     } else {
-      setCart(prevCart => [...prevCart, { food, quantity: 1 }]);
+      setCart(prevCart => [...prevCart, { food: foodToAdd!, quantity: 1 }]);
     }
   };
-
-  // Función para eliminar un producto del carrito y del globo de texto
-  const removeFromCart = (food: any) => {
+  
+  
+  const removeFromCart = (foodId: number) => {
     setCart(prevCart => {
       const updatedCart = prevCart
         .map(item => {
-          if (item.food.id === food.id && item.quantity > 0) {
+          if (item.food.id === foodId && item.quantity > 0) {
             return { ...item, quantity: item.quantity - 1 };
           }
           return item;
         })
-        .filter(item => item.quantity > 0); // Filtra los elementos con cantidad mayor a 0
+        .filter(item => item.quantity > 0);
       return updatedCart;
     });
   };
 
-  // Función para ir al carrito
   const goToCart = () => {
     navigate('/cart', { state: { cart } });
   };
 
-  // Calcula la cantidad total de productos en el carrito
   const totalItemsInCart = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
@@ -86,7 +88,7 @@ const FoodList: React.FC = () => {
           <ul>
             {cart.map((item, index) => (
               <li key={index}>
-                <span>{item.quantity}x</span> {item.food.name}
+                <span>{item.quantity}x</span> {item.food.descripcion}
               </li>
             ))}
           </ul>
@@ -99,8 +101,8 @@ const FoodList: React.FC = () => {
           <FoodCard
             key={food.id}
             food={food}
-            addToCart={addToCart}
-            removeFromCart={removeFromCart}
+            addToCart={() => addToCart(food.id)}
+            removeFromCart={() => removeFromCart(food.id)}
           />
         ))}
       </div>
