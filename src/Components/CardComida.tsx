@@ -1,7 +1,7 @@
 import React from 'react';
 import '../Styles/CardComida.css';
 import carritoImg from '../img/carrito.png';
-import { ArticuloManufacturado } from '../Elements/Elements';
+import { ArticuloManufacturado } from '../types/ArticuloManufacturado';
 
 interface FoodCardProps {
   food: ArticuloManufacturado;
