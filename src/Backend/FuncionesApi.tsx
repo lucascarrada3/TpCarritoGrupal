@@ -1,6 +1,6 @@
 // src/Backend/FuncionesApi.tsx
 import axios from 'axios';
-import { ArticuloManufacturado } from '../Elements/Elements';
+import { ArticuloManufacturado } from '../types/ArticuloManufacturado';
 
 export const fetchArticulosManufacturados = async (): Promise<ArticuloManufacturado[]> => {
     try {

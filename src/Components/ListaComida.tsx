@@ -4,7 +4,7 @@ import FoodCard from './CardComida';
 import '../Styles/ListaComida.css';
 import carritoImg from '../img/carrito.png';
 import { fetchArticulosManufacturados } from '../Backend/FuncionesApi';
-import { ArticuloManufacturado } from '../Elements/Elements';
+import { ArticuloManufacturado } from '../types/ArticuloManufacturado';
 
 const FoodList: React.FC = () => {
   const [cart, setCart] = useState<{ food: ArticuloManufacturado, quantity: number }[]>([]);
@@ -88,7 +88,7 @@ const FoodList: React.FC = () => {
           <ul>
             {cart.map((item, index) => (
               <li key={index}>
-                <span>{item.quantity}x</span> {item.food.descripcion}
+                <span>{item.quantity}x</span> {item.food.denominacion}
               </li>
             ))}
           </ul>
