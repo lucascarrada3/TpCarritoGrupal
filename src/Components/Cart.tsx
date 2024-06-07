@@ -2,8 +2,8 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import '../Styles/Cart.css';
 import { ArticuloManufacturado } from '../types/ArticuloManufacturado';
-import carritoImg from '../img/carrito.png';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface FoodCard {
   food: ArticuloManufacturado;
@@ -14,10 +14,10 @@ interface FoodCard {
 const Cart: React.FC<FoodCard> = ({ food, addToCart, removeFromCart }) => {
   const location = useLocation();
   const { cart } = location.state as { cart: { food: ArticuloManufacturado, quantity: number }[] };
+  const navigate = useNavigate();
 
   const now = new Date();
-const timeString = now.toISOString().split('T')[1].split('.')[0];
-  
+  const timeString = now.toISOString().split('T')[1].split('.')[0];
 
   const calculateTotal = () => {
     return cart.reduce((total, item) => {
@@ -56,10 +56,17 @@ const timeString = now.toISOString().split('T')[1].split('.')[0];
           'Content-Type': 'application/json'
         }
       });
+      navigate('/menu');
 
     } catch (error) {
       console.error('Error al crear el pedido:', error);
     }
+  };
+
+  const clearCart = () => {
+    // Limpiar el carrito
+    // Redirigir al usuario al menú
+    navigate('/menu');
   };
 
   return (
@@ -71,14 +78,17 @@ const timeString = now.toISOString().split('T')[1].split('.')[0];
             <h2>{item.food.denominacion}</h2>
             <p>Precio: ${item.food.precioVenta}</p>
             <p>Cantidad: {item.quantity}</p>
-            <button onClick={() => removeFromCart(item.food)}>-</button>
-            <img src={carritoImg} alt="Carrito" style={{ width: '50px' }} />
-            <button onClick={() => addToCart(item.food)}>+</button>
+            <button onClick={() => removeFromCart(food)}>-</button> {' '}
+            <button onClick={() => addToCart(food)}>+</button>
+            <span className="delete-icon" onClick={() => removeFromCart(item.food)}>🗑️</span>
           </div>
         ))}
       </div>
       <div>Total: ${calculateTotal()}</div>
-      <button onClick={handleBuy}>Comprar</button> {/* Botón para comprar */}
+      <div className="button-container">
+        <button onClick={handleBuy}>Comprar</button> {/* Botón para comprar */}
+        <button onClick={clearCart}>Eliminar Pedido</button> {/* Botón para eliminar pedido */}
+      </div>
     </div>
   );
 };
